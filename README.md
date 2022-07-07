@@ -1,2 +1,2 @@
-# Bedrock-Service-Manager-
+# Bedrock-Service-Manager
 Very epic
