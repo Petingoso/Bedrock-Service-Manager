@@ -15,11 +15,12 @@ struct depend{ // dont know if its good programming but another struct so it cou
 };
 
 struct characteristics{
+	char * name; //Self Explains
 	char * command; //Exec Command
 	char ** command_args; //Arguments, multiple so [][], gotta filter systemd
 	char *description; //description, simple 
 	int supervisor; //for now int, as openrc uses supervise-daemon and runit LOGGING ENABLE in conf  
-	char *pidfile; //Pid file of the process, gonna be NULL(none),RUNIT(if its runnit it means its a symlink, maybe the conversion will be made to just a regular ol' pid) or REGULAR /run/PROGRAM.pid
+	char *pidfile; //path to pid file
 	struct depend *dependencies; //deps obvs
 };
 
@@ -27,6 +28,9 @@ FILE *OpenFile(char *fp);
 
 int GetType(FILE *fp); //for setting Service.Type
 
+void GetName(char *name);
+
+void GetPidFile();
 
 int OpenRC_Parser(FILE *fp);
 
@@ -87,6 +91,19 @@ int GetType(FILE *fp){
 		return 2;
 	}
 	return 0;
+}
+
+void GetName(char *name){
+	int i;
+	for(i=0;name[i]!='.';i++){
+		;
+	}
+	name[i]='\0';
+	Service.name = name;
+}
+
+void GetPidFile(){
+	snprintf(Service.pidfile,50,"/run/%s.pid",Service.name);
 }
 
 int OpenRC_Parser(FILE *fp){
