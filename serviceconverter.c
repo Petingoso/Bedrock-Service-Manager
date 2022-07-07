@@ -21,7 +21,10 @@ struct characteristics{
 	struct depend *dependencies; //deps obvs
 };
 
+FILE *OpenFile(char *fp);
+
 int GetType(FILE *fp); //for setting Service.Type
+
 
 int OpenRC_Parser(FILE *fp);
 
@@ -34,8 +37,7 @@ int main(int argc, char **argv){
 	int input,target;
 	FILE *fin, *fout;
 	struct characteristics Service; 
-	//OPEN FILE OR something from argv[1]
-	input = GetType(fin);
+	fin = OpenFile(argv[1]);
 	//PASS TO HANDLER
 	switch (input) { 
 		case 1:
@@ -57,4 +59,13 @@ int main(int argc, char **argv){
 
 	fclose(fin);
 	fclose(fout);
+}
+
+FILE *OpenFile(char *path){
+	FILE *fp;
+	if ((fp = fopen(path,"r")) == NULL) {
+		printf("error opening %s\n",path);
+		return NULL;
+	}
+	return fp;
 }
