@@ -4,6 +4,8 @@
 /* -pass to a struct system that handles the relevant strings and stufd */
 /* -pass to a function 5that reads the *struct and converts to desired init with 50 switch statements */
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 struct depend{ // dont know if its good programming but another struct so it could be changed to somehow acommodate recursive dependencies, runit is ignored, s6 is a future problem
 	char * type; //before,after;wants=use,requires=need
@@ -33,10 +35,11 @@ int SystemD_Parser(FILE *fp);
 void OpenRC_Writer(struct characteristics);
 void SystemD_Writer(struct characteristics);
 
+struct characteristics Service; 
+
 int main(int argc, char **argv){
 	int input,target;
 	FILE *fin, *fout;
-	struct characteristics Service; 
 	fin = OpenFile(argv[1]);
 	//PASS TO HANDLER
 	switch (input) { 
@@ -54,7 +57,7 @@ int main(int argc, char **argv){
 		case 2:
 			SystemD_Writer(Service);break;
 		default:
-			printf("error\n");;break;
+			printf("error\n");break;
 	}
 
 	fclose(fin);
@@ -68,4 +71,29 @@ FILE *OpenFile(char *path){
 		return NULL;
 	}
 	return fp;
+}
+
+int GetType(FILE *fp){
+	char line[31];
+	fgets(line,31,fp);
+	printf("line = %s\n",line);
+	if (strstr(line,"openrc-run")){
+		printf("it's openrc\n");
+		return 1;
+	}
+
+	if(strstr(line,"Unit")){
+		printf("It's Systemd\n");
+		return 2;
+	}
+	return 0;
+}
+
+int OpenRC_Parser(FILE *fp){
+	Service.supervisor=1;
+	/* read a string 
+	 * check if its command,command args,pidfile*/
+	/* also check if its depend,start,stop or restart (pain)*/ 
+	/* parse accordingly and set Service values*/ 
+	return 0;
 }
