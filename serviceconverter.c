@@ -1,8 +1,10 @@
-/* -read a file in standard C */
-/* -probably according to the first line set a flag for init, something like #RUNIT */
-/* -parse the file with regex magic */
-/* -pass to a struct system that handles the relevant strings and stufd */
-/* -pass to a function 5that reads the *struct and converts to desired init with 50 switch statements */
+/*
+ -read a file in standard C
+ -probably according to the first line set a flag for init, something like #RUNIT
+ -parse the file with regex magic
+ -pass to a struct system that handles the relevant strings and stufd
+ -pass to a function 5that reads the *struct and converts to desired init with 50 switch statements
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,8 +20,8 @@ struct characteristics{
 	char * name; //Self Explains
 	char * command; //Exec Command
 	char ** command_args; //Arguments, multiple so [][], gotta filter systemd
-	char *description; //description, simple 
-	int supervisor; //for now int, as openrc uses supervise-daemon and runit LOGGING ENABLE in conf  
+	char *description; //description, simple
+	int supervisor; //for now int, as openrc uses supervise-daemon and runit LOGGING ENABLE in conf
 	char *pidfile; //path to pid file
 	struct depend *dependencies; //deps obvs
 };
@@ -39,20 +41,20 @@ int SystemD_Parser(FILE *fp);
 void OpenRC_Writer(struct characteristics);
 void SystemD_Writer(struct characteristics);
 
-struct characteristics Service; 
+struct characteristics Service;
 
 int main(int argc, char **argv){
 	int input,target;
 	FILE *fin, *fout;
 	fin = OpenFile(argv[1]);
 	//PASS TO HANDLER
-	switch (input) { 
+	switch (input) {
 		case 1:
 			OpenRC_Parser(fin);break;
 		case 2:
 			SystemD_Parser(fin);break;
 		default:
-			printf("error\n");;break;
+			printf("Error\n");;break;
 	}
 
 	switch (target){
@@ -61,7 +63,7 @@ int main(int argc, char **argv){
 		case 2:
 			SystemD_Writer(Service);break;
 		default:
-			printf("error\n");break;
+			printf("Error\n");break;
 	}
 
 	fclose(fin);
@@ -71,7 +73,7 @@ int main(int argc, char **argv){
 FILE *OpenFile(char *path){
 	FILE *fp;
 	if ((fp = fopen(path,"r")) == NULL) {
-		printf("error opening %s\n",path);
+		printf("Error opening %s\n",path);
 		return NULL;
 	}
 	return fp;
@@ -82,12 +84,12 @@ int GetType(FILE *fp){
 	fgets(line,31,fp);
 	printf("line = %s\n",line);
 	if (strstr(line,"openrc-run")){
-		printf("it's openrc\n");
+		printf("It's OpenRC\n");
 		return 1;
 	}
 
 	if(strstr(line,"Unit")){
-		printf("It's Systemd\n");
+		printf("It's systemd\n"); //systemd isn't capped lol
 		return 2;
 	}
 	return 0;
@@ -96,7 +98,7 @@ int GetType(FILE *fp){
 void GetName(char *name){
 	int i;
 	for(i=0;name[i]!='.';i++){
-		;
+		; //what the hell does this do? nothing?
 	}
 	name[i]='\0';
 	Service.name = name;
@@ -108,9 +110,11 @@ void GetPidFile(){
 
 int OpenRC_Parser(FILE *fp){
 	Service.supervisor=1;
-	/* read a string 
-	 * check if its command,command args,pidfile*/
-	/* also check if its depend,start,stop or restart (pain)*/ 
-	/* parse accordingly and set Service values*/ 
+	/*
+        read a string
+        check if its command,command args,pidfile
+        also check if its depend,start,stop or restart (pain)
+        parse accordingly and set Service values
+    */
 	return 0;
 }
