@@ -30,7 +30,8 @@ FILE *OpenFile(char *fp);
 
 int GetType(FILE *fp); //for setting Service.Type
 
-void GetName(char *name);
+char * FilterBefore(char *name,char letter);
+char * FilterAfter(char *name,char letter);
 
 void GetPidFile();
 
@@ -48,6 +49,7 @@ int main(int argc, char **argv){
 	FILE *fin, *fout;
 	fin = OpenFile(argv[1]);
 	//PASS TO HANDLER
+	Service.name=FilterBefore(argv[1],'.');
 	switch (input) {
 		case 1:
 			OpenRC_Parser(fin);break;
@@ -81,7 +83,7 @@ FILE *OpenFile(char *path){
 
 int GetType(FILE *fp){
 	char line[31];
-	fgets(line,31,fp);
+	fgets(line,30,fp);
 	printf("line = %s\n",line);
 	if (strstr(line,"openrc-run")){
 		printf("It's OpenRC\n");
@@ -95,26 +97,50 @@ int GetType(FILE *fp){
 	return 0;
 }
 
-void GetName(char *name){
+char * FilterBefore(char *name,char letter){
 	int i;
-	for(i=0;name[i]!='.' | name[i]!='\0';i++){
+	for(i=0;name[i]!=letter & name[i]!='\0';i++){
 		; 
 	}
 	name[i]='\0';
-	Service.name = name;
+	return name;
 }
+
+
+char * FilterAfter(char *name,char letter){
+	int i,count=0;
+	for(i=strlen(name)-1 ;name[i]!=letter & name[i]!='\0';i--){
+	}
+	name=&name[i+1];
+	return name;
+}
+
 
 void GetPidFile(){
 	snprintf(Service.pidfile,50,"/run/%s.pid",Service.name);
 }
 
+
 int OpenRC_Parser(FILE *fp){
+	char line[151];
 	Service.supervisor=1;
-	/*
-        read a string
-        check if its command,command args,pidfile
-        also check if its depend,start,stop or restart (pain)
-        parse accordingly and set Service values
-    */
+	GetPidFile();
+	while (fgets(line,150,fp) != NULL) {
+		if (strstr(line,"command=")){
+			Service.command=FilterAfter(line,'=');
+		}
+		if (strstr(line,"command_args=")){
+			Service.command=FilterAfter(line,'=');
+		}
+		if (strstr(line,"description=")){
+			Service.command=FilterAfter(line,'=');
+		}
+	}
+	/* read a string 
+	 * check if its command,command args,pidfile*/
+	/* also check if its depend,start,stop or restart (pain)*/ 
+	/* parse accordingly and set Service values*/ 
 	return 0;
 }
+
+
