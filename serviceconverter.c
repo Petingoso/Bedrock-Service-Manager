@@ -97,8 +97,8 @@ int GetType(FILE *fp){
 
 void GetName(char *name){
 	int i;
-	for(i=0;name[i]!='.';i++){
-		; //what the hell does this do? nothing?
+	for(i=0;name[i]!='.' | name[i]!='\0';i++){
+		; 
 	}
 	name[i]='\0';
 	Service.name = name;
