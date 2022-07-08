@@ -19,7 +19,7 @@ struct depend{ // dont know if its good programming but another struct so it cou
 struct characteristics{
 	char * name; //Self Explains
 	char * command; //Exec Command
-	char ** command_args; //Arguments, multiple so [][], gotta filter systemd
+	char * command_args; //Arguments, multiple so [][], gotta filter systemd nvm just paste the whole string lol
 	char *description; //description, simple
 	int supervisor; //for now int, as openrc uses supervise-daemon and runit LOGGING ENABLE in conf
 	char *pidfile; //path to pid file
@@ -130,10 +130,10 @@ int OpenRC_Parser(FILE *fp){
 			Service.command=FilterAfter(line,'=');
 		}
 		if (strstr(line,"command_args=")){
-			Service.command=FilterAfter(line,'=');
+			Service.command_args=FilterAfter(line,'=');
 		}
 		if (strstr(line,"description=")){
-			Service.command=FilterAfter(line,'=');
+			Service.description=FilterAfter(line,'=');
 		}
 	}
 	/* read a string 
